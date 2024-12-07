@@ -8,12 +8,12 @@
 import SwiftUI
 
 @main
-struct WorldCountries_SwiftUI_MVVMApp: App {
+struct WorldCountriesApp: App {
     let persistenceController = PersistenceController.shared
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CountryListView(context: persistenceController.container.viewContext)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }

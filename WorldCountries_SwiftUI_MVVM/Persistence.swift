@@ -52,3 +52,38 @@ struct PersistenceController {
         container.viewContext.automaticallyMergesChangesFromParent = true
     }
 }
+
+extension PersistenceController {
+    static var preview: PersistenceController = {
+        let controller = PersistenceController(inMemory: true)
+        let context = controller.container.viewContext
+
+        // Добавляем примерные данные
+        let exampleCountry = CountryEntity(context: context)
+        exampleCountry.id = UUID()
+        exampleCountry.name = "Japan"
+        exampleCountry.region = "Asia"
+        exampleCountry.flag = "🇯🇵"
+        exampleCountry.isFavorite = false
+
+        let exampleDetails = CountryDetailingEntity(context: context)
+        exampleDetails.id = exampleCountry.id
+        exampleDetails.officialName = "Japan"
+        exampleDetails.capital = "Tokyo"
+        exampleDetails.population = 126000000
+        exampleDetails.area = 377975.0
+        exampleDetails.languages = "Japanese"
+        exampleDetails.timezones = "UTC+09:00"
+        exampleDetails.flagImage = "https://flagcdn.com/w320/jp.png"
+
+        exampleCountry.countryDetailingEntityRel = exampleDetails
+
+        do {
+            try context.save()
+        } catch {
+            fatalError("Failed to create preview data: \(error.localizedDescription)")
+        }
+
+        return controller
+    }()
+}
