@@ -20,6 +20,20 @@ struct PersistenceController {
     /// - Parameter inMemory: Указывает, нужно ли использовать временное хранилище в памяти (например, для тестов).
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "WorldCountries_SwiftUI_MVVM")
+        
+        let description = container.persistentStoreDescriptions.first
+        
+        let url = description?.url
+        do {
+            if let url = url {
+                try FileManager.default.removeItem(at: url)
+            }
+        } catch {
+            print("Failed to delete persistent store: \(error.localizedDescription)")
+        }
+        
+        description?.shouldMigrateStoreAutomatically = true
+        description?.shouldInferMappingModelAutomatically = true
 
         // Настройка временного хранилища (если inMemory = true)
         if inMemory {

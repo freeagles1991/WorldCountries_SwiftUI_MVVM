@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -37,10 +38,28 @@ struct ContentView: View {
     }
 
     private func loadAndSaveCountries() {
+        let dataSaver = DataSaver(context: viewContext)
+        //dataSaver.clearAllEntities() //Удаляем все данные
+        
+        // Проверяем, есть ли уже данные в Core Data
+        let fetchRequest: NSFetchRequest<CountryEntity> = CountryEntity.fetchRequest()
+        fetchRequest.fetchLimit = 1 // Ограничиваем запрос одним объектом для проверки наличия данных
+        
+        do {
+            let count = try viewContext.count(for: fetchRequest)
+            if count > 0 {
+                print("Data already exists in Core Data. Skipping network fetch.")
+                shouldNavigate = true // Активируем переход
+                return
+            }
+        } catch {
+            print("Failed to fetch data from Core Data: \(error.localizedDescription)")
+        }
+        
+        // Если данных нет, загружаем их из сети
         NetworkClient.shared.fetchCountries { result in
             switch result {
             case .success(let countries):
-                let dataSaver = DataSaver(context: viewContext)
                 dataSaver.saveCountries(countries)
                 DispatchQueue.main.async {
                     shouldNavigate = true // Активируем переход

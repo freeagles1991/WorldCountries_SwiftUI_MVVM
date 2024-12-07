@@ -16,10 +16,14 @@ struct CountryListView: View {
     var body: some View {
         List {
             ForEach(countries) { country in
-                VStack {
-                    Text(country.name ?? "Unknown")
-                    Text(country.region ?? "")
+                HStack {
                     Text(country.flag ?? "")
+                        .font(.title)
+                    VStack(alignment: .leading) {
+                        Text(country.name ?? "Unknown")
+                        Text(country.region ?? "")
+                    }
+                    
                 }
             }
         }
