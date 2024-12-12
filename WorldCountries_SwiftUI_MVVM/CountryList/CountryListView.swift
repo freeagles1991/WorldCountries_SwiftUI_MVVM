@@ -7,14 +7,15 @@
 
 import SwiftUI
 import CoreData
+import Kingfisher
 
 struct CountryListView: View {
     @StateObject private var viewModel: CountryListViewModel
-
+    
     init(context: NSManagedObjectContext) {
         _viewModel = StateObject(wrappedValue: CountryListViewModel(context: context))
     }
-
+    
     var body: some View {
         NavigationStack {
             if viewModel.isLoading {
@@ -24,7 +25,7 @@ struct CountryListView: View {
                 // Отображение реальных данных
                 List(viewModel.countries) { country in
                     
-                    NavigationLink(destination: CountryDetailView(countryDetailingEntity: country.countryDetailingEntityRel)) {
+                    NavigationLink(destination: CountryDetailView(countryEntity: country)) {
                         HStack {
                             Text(country.flag ?? "")
                                 .font(.system(size: 40))
@@ -53,7 +54,7 @@ struct CountryListView: View {
 /// Представление-заглушка с анимацией
 struct PlaceholderView: View {
     @State private var isAnimating = false
-
+    
     var body: some View {
         List(0..<10, id: \.self) { _ in
             HStack {
@@ -81,24 +82,55 @@ struct PlaceholderView: View {
 }
 
 struct CountryDetailView: View {
-    var countryDetailingEntity: CountryDetailingEntity?
+    var countryEntity: CountryEntity?
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text(countryDetailingEntity?.officialName ?? "Unknown Country")
+            CountryFlagView(imageURL: countryEntity?.countryDetailingEntityRel?.flagImage)
+            Text(countryEntity?.countryDetailingEntityRel?.officialName ?? "Unknown Country")
                 .font(.largeTitle)
                 .bold()
-            Text("Capital: \(countryDetailingEntity?.capital ?? "Unknown Capital")")
-            Text("Population: \(countryDetailingEntity?.population)")
-            Text("Area: \(countryDetailingEntity?.area ?? 0.0, specifier: "%.2f") km²")
-            Text("Currency: \(countryDetailingEntity?.currency ?? "")")
-            Text("Languages: \(countryDetailingEntity?.languages ?? "")")
-            Text("Timezones: \(countryDetailingEntity?.timezones ?? "")")
-            Text("Latitude: \(countryDetailingEntity?.latitude)")
-            Text("Longitude: \(countryDetailingEntity?.longitude)")
+            Text("Capital: \(countryEntity?.countryDetailingEntityRel?.capital ?? "Unknown Capital")")
+            Text("Population: \(countryEntity?.countryDetailingEntityRel?.population)")
+            Text("Area: \(countryEntity?.countryDetailingEntityRel?.area ?? 0.0, specifier: "%.2f") km²")
+            Text("Currency: \(countryEntity?.countryDetailingEntityRel?.currency ?? "")")
+            Text("Languages: \(countryEntity?.countryDetailingEntityRel?.languages ?? "")")
+            Text("Timezones: \(countryEntity?.countryDetailingEntityRel?.timezones ?? "")")
+            Text("Latitude: \(countryEntity?.countryDetailingEntityRel?.latitude)")
+            Text("Longitude: \(countryEntity?.countryDetailingEntityRel?.longitude)")
             Spacer()
         }
         .padding()
-        .navigationTitle(countryDetailingEntity?.officialName ?? "Details")
+        .navigationTitle(countryEntity?.name ?? "Details")
+    }
+}
+
+struct CountryFlagView: View {
+    let imageURL: String?
+    
+    var body: some View {
+        GeometryReader { geometry in
+            KFImage(URL(string: imageURL ?? ""))
+                .placeholder {
+                    // Заглушка
+                    RoundedRectangle(cornerRadius: 10)
+                        .foregroundColor(.gray.opacity(0.2))
+                        .overlay(
+                            Image(systemName: "photo")
+                                .foregroundColor(.gray)
+                        )
+                }
+                .cancelOnDisappear(true)
+                .resizable()
+                .scaledToFill()
+                .frame(width: geometry.size.width, height: geometry.size.width * 0.6) // Пропорции 16:9
+                .cornerRadius(10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.gray, lineWidth: 2) // Обводка
+                )
+                .clipped()
+        }
+        .frame(height: UIScreen.main.bounds.width * 0.6) // Ограничение высоты
     }
 }
 
