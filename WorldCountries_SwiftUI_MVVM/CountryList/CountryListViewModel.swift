@@ -16,7 +16,7 @@ final class CountryListViewModel: ObservableObject {
     @Published var filteredCountries: [CountryEntity] = [] // Отфильтрованные данные
     @Published var errorMessage: String? // Сообщение об ошибке для отображения алерта
 
-    private let context: NSManagedObjectContext
+    let context: NSManagedObjectContext
 
     init(context: NSManagedObjectContext) {
         self.context = context

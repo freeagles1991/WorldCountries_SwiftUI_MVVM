@@ -10,6 +10,7 @@ import CoreData
 
 struct CountryListView: View {
     @StateObject private var viewModel: CountryListViewModel
+    @State private var showFavorites = false
     
     init(context: NSManagedObjectContext) {
         _viewModel = StateObject(wrappedValue: CountryListViewModel(context: context))
@@ -46,6 +47,21 @@ struct CountryListView: View {
                 .searchable(text: $viewModel.searchText, placement: .navigationBarDrawer(displayMode: .always))
                 .onChange(of: viewModel.searchText) { _ in
                     viewModel.filterCountries()
+                }
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            showFavorites = true
+                        }) {
+                            Image(systemName: "star.fill")
+                        }
+                    }
+                }
+                .sheet(isPresented: $showFavorites, onDismiss: {
+                    // Обновляем список стран после закрытия экрана "Избранное"
+                    viewModel.fetchCountries()
+                }) {
+                    FavoritesView(context: viewModel.context)
                 }
             }
         }
