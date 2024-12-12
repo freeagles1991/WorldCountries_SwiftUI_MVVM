@@ -12,6 +12,8 @@ final class CountryListViewModel: ObservableObject {
     @Published var isLoading: Bool = true // Состояние загрузки
     @Published var countries: [CountryEntity] = [] // Загруженные данные
     @Published var countryDetails: CountryDetailingEntity? // Детализация страны
+    @Published var searchText: String = "" // Текст поиска
+    @Published var filteredCountries: [CountryEntity] = [] // Отфильтрованные данные
     @Published var errorMessage: String? // Сообщение об ошибке для отображения алерта
 
     private let context: NSManagedObjectContext
@@ -35,6 +37,7 @@ final class CountryListViewModel: ObservableObject {
             } else {
                 DispatchQueue.main.async {
                     self.countries = results
+                    self.filteredCountries = results
                     self.isLoading = false
                     print("Данные успешно загружены из Core Data.")
                 }
@@ -63,6 +66,25 @@ final class CountryListViewModel: ObservableObject {
                     self.isLoading = false
                 }
             }
+        }
+    }
+    
+    //Фильтруем в строке поиска
+    func filterCountries() {
+        if searchText.isEmpty {
+            print("[Filter] Search text is empty. Showing all countries.")
+            filteredCountries = countries
+        } else {
+            print("[Filter] Filtering countries starting with: \(searchText)")
+            filteredCountries = countries.filter { country in
+                guard let name = country.name else { return false }
+                let isMatch = name.lowercased().hasPrefix(searchText.lowercased())
+                if isMatch {
+                    print("[Filter] Matched country: \(name)")
+                }
+                return isMatch
+            }
+            print("[Filter] Found \(filteredCountries.count) countries starting with '\(searchText)'.")
         }
     }
     
