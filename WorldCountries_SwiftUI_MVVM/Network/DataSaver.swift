@@ -57,32 +57,17 @@ final class DataSaver {
             }
         }
     }
-    
-    func clearAllEntities() {
-        context.perform {
-            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = CountryEntity.fetchRequest()
-            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-
-            do {
-                try self.context.execute(deleteRequest)
-                try self.context.save()
-                print("All entities cleared successfully.")
-            } catch {
-                print("Failed to clear entities: \(error.localizedDescription)")
-            }
-        }
-    }
 
     private func doesCountryExist(name: String) -> Bool {
         let fetchRequest: NSFetchRequest<CountryEntity> = CountryEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "name == %@", name)
-        fetchRequest.fetchLimit = 1 // Ограничиваем запрос одной записью для оптимизации
-        
+
         do {
             let count = try context.count(for: fetchRequest)
-            return count > 0 // Возвращаем true, если такая запись уже существует
+            print("Проверка существования страны \(name): \(count > 0 ? "существует" : "не существует")")
+            return count > 0
         } catch {
-            print("Failed to check if country exists: \(error.localizedDescription)")
+            print("Ошибка проверки существования страны \(name): \(error.localizedDescription)")
             return false
         }
     }

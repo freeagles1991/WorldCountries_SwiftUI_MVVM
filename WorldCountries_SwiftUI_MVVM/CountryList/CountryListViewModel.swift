@@ -12,6 +12,7 @@ final class CountryListViewModel: ObservableObject {
     @Published var isLoading: Bool = true // Состояние загрузки
     @Published var countries: [CountryEntity] = [] // Загруженные данные
     @Published var countryDetails: CountryDetailingEntity? // Детализация страны
+    @Published var errorMessage: String? // Сообщение об ошибке для отображения алерта
 
     private let context: NSManagedObjectContext
 
@@ -23,23 +24,24 @@ final class CountryListViewModel: ObservableObject {
     /// Проверяем Core Data и загружаем данные
     func fetchCountries() {
         let fetchRequest: NSFetchRequest<CountryEntity> = CountryEntity.fetchRequest()
-        
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
 
         do {
             let results = try context.fetch(fetchRequest)
+            print("Найдено стран в Core Data: \(results.count)")
             if results.isEmpty {
-                // Если данных нет, загружаем из API
+                print("Core Data пуста. Загружаем из сети...")
                 loadFromNetwork()
             } else {
-                // Если данные есть, отображаем их
                 DispatchQueue.main.async {
                     self.countries = results
                     self.isLoading = false
+                    print("Данные успешно загружены из Core Data.")
                 }
             }
         } catch {
-            print("Failed to fetch countries from Core Data: \(error.localizedDescription)")
+            print("Ошибка при загрузке из Core Data: \(error.localizedDescription)")
+            showError("Не удалось загрузить страны из Core Data: \(error.localizedDescription)")
         }
     }
 
@@ -48,17 +50,41 @@ final class CountryListViewModel: ObservableObject {
         NetworkClient.shared.fetchCountries { result in
             switch result {
             case .success(let countries):
+                print("Данные успешно загружены из сети: \(countries.count) записей.")
                 let dataSaver = DataSaver(context: self.context)
                 dataSaver.saveCountries(countries)
                 DispatchQueue.main.async {
-                    self.fetchCountries() // Повторный вызов для обновления из Core Data
+                    self.fetchCountries() // Повторный вызов для проверки сохранённых данных
                 }
             case .failure(let error):
-                print("Failed to fetch countries: \(error.localizedDescription)")
+                print("Ошибка загрузки данных из сети: \(error.localizedDescription)")
+                self.showError("Не удалось загрузить данные из сети: \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     self.isLoading = false
                 }
             }
+        }
+    }
+    
+    private func handleNetworkError(_ error: Error) {
+        let message: String
+        if let networkError = error as? NetworkError {
+            switch networkError {
+            case .invalidURL:
+                message = "Неверный URL. Проверьте адрес и попробуйте снова."
+            case .noData:
+                message = "Данные отсутствуют. Проверьте соединение с интернетом."
+            }
+        } else {
+            message = "Произошла ошибка: \(error.localizedDescription)"
+        }
+
+        showError(message)
+    }
+    
+    private func showError(_ message: String) {
+        DispatchQueue.main.async {
+            self.errorMessage = message
         }
     }
 }
