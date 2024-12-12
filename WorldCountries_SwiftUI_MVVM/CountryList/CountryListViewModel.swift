@@ -66,6 +66,25 @@ final class CountryListViewModel: ObservableObject {
         }
     }
     
+    //Переключаем параметр Избранное в контексте
+    func toggleFavorite(for country: CountryEntity) {
+        context.perform {
+            country.isFavorite.toggle()
+
+            do {
+                try self.context.save()
+                DispatchQueue.main.async {
+                    self.fetchCountries() // Обновляем список после изменения
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.showError("Не удалось обновить статус избранного: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    //Обработка ошибок сети
     private func handleNetworkError(_ error: Error) {
         let message: String
         if let networkError = error as? NetworkError {
@@ -82,6 +101,7 @@ final class CountryListViewModel: ObservableObject {
         showError(message)
     }
     
+    //Показываем алерт
     private func showError(_ message: String) {
         DispatchQueue.main.async {
             self.errorMessage = message

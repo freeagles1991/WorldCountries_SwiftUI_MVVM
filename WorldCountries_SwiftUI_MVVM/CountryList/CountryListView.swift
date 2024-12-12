@@ -34,6 +34,12 @@ struct CountryListView: View {
                                 Text(country.region ?? "")
                                     .foregroundStyle(.secondary)
                             }
+                            Spacer()
+                            Image(systemName: country.isFavorite ? "star.fill" : "star")
+                                .foregroundColor(country.isFavorite ? .yellow : .gray)
+                                .onTapGesture {
+                                    viewModel.toggleFavorite(for: country)
+                                }
                         }
                     }
                 }
@@ -90,17 +96,41 @@ struct CountryDetailView: View {
                 .font(.largeTitle)
                 .bold()
             Text("Capital: \(countryEntity?.countryDetailingEntityRel?.capital ?? "Unknown Capital")")
-            Text("Population: \(countryEntity?.countryDetailingEntityRel?.population)")
+            
+            if let population = countryEntity?.countryDetailingEntityRel?.population {
+                Text("Population: \(population)")
+            } else {
+                Text("Population: Unknown")
+            }
+            
             Text("Area: \(countryEntity?.countryDetailingEntityRel?.area ?? 0.0, specifier: "%.2f") km²")
-            Text("Currency: \(countryEntity?.countryDetailingEntityRel?.currency ?? "")")
-            Text("Languages: \(countryEntity?.countryDetailingEntityRel?.languages ?? "")")
-            Text("Timezones: \(countryEntity?.countryDetailingEntityRel?.timezones ?? "")")
-            Text("Latitude: \(countryEntity?.countryDetailingEntityRel?.latitude)")
-            Text("Longitude: \(countryEntity?.countryDetailingEntityRel?.longitude)")
+            
+            Text("Currency: \(countryEntity?.countryDetailingEntityRel?.currency ?? "Unknown")")
+            
+            Text("Languages: \(countryEntity?.countryDetailingEntityRel?.languages ?? "Unknown")")
+            
+            if let timezones = countryEntity?.countryDetailingEntityRel?.timezones {
+                let timezoneList = timezones.split(separator: "|").joined(separator: ", ")
+                Text("Timezones: \(timezoneList)")
+            } else {
+                Text("Timezones: Unknown")
+            }
+            
+            if let latitude = countryEntity?.countryDetailingEntityRel?.latitude {
+                Text("Latitude: \(latitude)")
+            } else {
+                Text("Latitude: Unknown")
+            }
+            
+            if let longitude = countryEntity?.countryDetailingEntityRel?.longitude {
+                Text("Longitude: \(longitude)")
+            } else {
+                Text("Longitude: Unknown")
+            }
+            
             Spacer()
         }
         .padding()
-        .navigationTitle(countryEntity?.name ?? "Details")
     }
 }
 
