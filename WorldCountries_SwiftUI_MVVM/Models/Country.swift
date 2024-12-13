@@ -40,34 +40,3 @@ struct CountryResponse: Decodable {
     let flags: Flags?
 }
 
-//extension CountryResponse {
-//    func toCountry() -> CountryEntity {
-//        return CountryEntity(
-//            id: UUID(),
-//            name: self.name.common,
-//            region: self.region ?? "",
-//            flag: self.flag ?? "",
-//            isFavorite: false)
-//    }
-//}
-
-//struct Country {
-//    let id: UUID
-//    let name: String
-//    let region: String
-//    let flag: String
-//    let isFavorite: Bool
-//}
-//
-//extension Country {
-//    func toCountryEntity(context: NSManagedObjectContext) -> CountryEntity {
-//        let entity = CountryEntity(context: context)
-//        entity.id = self.id
-//        entity.name = self.name
-//        entity.region = self.region
-//        entity.flag = self.flag
-//        entity.isFavorite = self.isFavorite
-//        return entity
-//    }
-//}
-
