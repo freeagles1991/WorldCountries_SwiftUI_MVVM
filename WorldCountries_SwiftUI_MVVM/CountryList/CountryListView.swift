@@ -22,47 +22,26 @@ struct CountryListView: View {
                 // Загрузка: таблица-заглушка
                 PlaceholderView()
             } else {
-                // Отображение реальных данных
-                List(viewModel.filteredCountries) { country in
-                    
-                    NavigationLink(destination: CountryDetailView(countryEntity: country)) {
-                        HStack {
-                            Text(country.flag ?? "")
-                                .font(.system(size: 40))
-                            VStack(alignment: .leading) {
-                                Text(country.name ?? "Unknown Country")
-                                Text(country.region ?? "")
-                                    .foregroundStyle(.secondary)
+                countryListView
+                    .navigationTitle("Countries")
+                    .searchable(text: $viewModel.searchText, placement: .navigationBarDrawer(displayMode: .always))
+                    .onChange(of: viewModel.searchText) { _ in
+                        viewModel.filterCountries()
+                    }
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button(action: {
+                                showFavorites = true
+                            }) {
+                                Image(systemName: "star.fill")
                             }
-                            Spacer()
-                            Image(systemName: country.isFavorite ? "star.fill" : "star")
-                                .foregroundColor(country.isFavorite ? .yellow : .gray)
-                                .onTapGesture {
-                                    viewModel.toggleFavorite(for: country)
-                                }
                         }
                     }
-                }
-                .navigationTitle("Countries")
-                .searchable(text: $viewModel.searchText, placement: .navigationBarDrawer(displayMode: .always))
-                .onChange(of: viewModel.searchText) { _ in
-                    viewModel.filterCountries()
-                }
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            showFavorites = true
-                        }) {
-                            Image(systemName: "star.fill")
-                        }
+                    .sheet(isPresented: $showFavorites, onDismiss: {
+                        viewModel.fetchCountries()
+                    }) {
+                        FavoritesView(context: viewModel.context)
                     }
-                }
-                .sheet(isPresented: $showFavorites, onDismiss: {
-                    // Обновляем список стран после закрытия экрана "Избранное"
-                    viewModel.fetchCountries()
-                }) {
-                    FavoritesView(context: viewModel.context)
-                }
             }
         }
         .alert("Ошибка", isPresented: Binding<Bool>(
@@ -72,6 +51,23 @@ struct CountryListView: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text(viewModel.errorMessage ?? "")
+        }
+    }
+
+    private var countryListView: some View {
+        List(viewModel.filteredCountries) { country in
+            NavigationLink(destination: CountryDetailView(context: viewModel.context, countryEntity: country)) {
+                HStack {
+                    Text(country.flag ?? "")
+                        .font(.system(size: 40))
+                    VStack(alignment: .leading) {
+                        Text(country.name ?? "Unknown Country")
+                        Text(country.region ?? "")
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                }
+            }
         }
     }
 }
@@ -109,3 +105,6 @@ struct PlaceholderView: View {
 #Preview {
     CountryListView(context: PersistenceController.preview.container.viewContext)
 }
+
+
+
