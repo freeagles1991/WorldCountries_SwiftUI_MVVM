@@ -22,19 +22,19 @@ struct FavoritesView: View {
                     Text(country.flag ?? "")
                         .font(.system(size: 40))
                     VStack(alignment: .leading) {
-                        Text(country.name ?? "Unknown Country")
-                        Text(country.region ?? "")
+                        Text(country.name ?? Constants.Text.unknownCountry)
+                        Text(country.region ?? Constants.Text.unknownRegion)
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
-                    Image(systemName: country.isFavorite ? "xmark" : "star")
-                        .foregroundColor(country.isFavorite ? .red : .gray)
+                    Image(systemName: Constants.Images.removeFavorite)
+                        .foregroundColor(.red)
                         .onTapGesture {
                             viewModel.toggleFavorite(for: country)
                         }
                 }
             }
-            .navigationTitle("Favorites")
+            .navigationTitle(Constants.Text.favoritesTitle)
             .navigationBarTitleDisplayMode(.inline)
         }
     }

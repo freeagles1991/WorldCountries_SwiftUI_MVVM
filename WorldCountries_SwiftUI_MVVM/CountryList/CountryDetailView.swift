@@ -25,68 +25,69 @@ struct CountryDetailView: View {
                 CountryFlagView(imageURL: countryEntity.countryDetailingEntityRel?.flagImage)
                 
                 HStack(alignment: .top, spacing: 8) {
-                    Text(countryEntity.countryDetailingEntityRel?.officialName ?? "Unknown Country")
+                    Text(countryEntity.countryDetailingEntityRel?.officialName ?? "\(Constants.Text.unknown) \(Constants.Text.country)")
                         .font(.largeTitle)
                         .bold()
-                        .lineLimit(nil) // Позволяет тексту переноситься на несколько строк
+                        .lineLimit(nil)
                     Spacer()
-                    VStack {
-                        Button(action: {
-                            viewModel.toggleFavorite(for: countryEntity)
-                        }) {
-                            Image(systemName: countryEntity.isFavorite ? "star.fill" : "star")
-                                .foregroundColor(countryEntity.isFavorite ? .yellow : .gray)
-                                .font(.largeTitle)
-                        }
-                        .frame(maxWidth: 50.0, alignment: .center)
+                    Button(action: {
+                        viewModel.toggleFavorite(for: countryEntity)
+                    }) {
+                        Image(systemName: countryEntity.isFavorite ? Constants.Images.favoriteFilled : Constants.Images.favoriteEmpty)
+                            .foregroundColor(countryEntity.isFavorite ? .yellow : .gray)
+                            .font(.largeTitle)
                     }
                 }
                 
-                Text("Capital: \(countryEntity.countryDetailingEntityRel?.capital ?? "Unknown Capital")")
+                Text("\(Constants.Text.capital): \(countryEntity.countryDetailingEntityRel?.capital ?? Constants.Text.unknown)")
                 
                 if let population = countryEntity.countryDetailingEntityRel?.population {
-                    Text("Population: \(population)")
+                    Text("\(Constants.Text.population)\(population)")
                 } else {
-                    Text("Population: Unknown")
+                    Text("\(Constants.Text.population)\(Constants.Text.unknown)")
                 }
                 
-                Text("Area: \(countryEntity.countryDetailingEntityRel?.area ?? 0.0, specifier: "%.2f") km²")
+                if let area = countryEntity.countryDetailingEntityRel?.area {
+                    Text("\(Constants.Text.area)\(area, specifier: "%.2f") km²")
+                } else {
+                    Text("\(Constants.Text.area)\(Constants.Text.unknown)")
+                }
                 
                 if let currency = countryEntity.countryDetailingEntityRel?.currency {
                     let currencyList = currency.split(separator: "|").map { String($0) }
                     HStack {
-                        Text("Currency: ")
+                        Text(Constants.Text.currency)
                         StringChipView(items: currencyList, backgroundColor: .green)
                     }
                 } else {
-                    Text("Currency: Unknown")
+                    Text("\(Constants.Text.currency)\(Constants.Text.unknown)")
                 }
                 
                 if let languages = countryEntity.countryDetailingEntityRel?.languages {
                     let languageList = languages.split(separator: "|").map { String($0) }
                     HStack {
-                        Text("Languages: ")
+                        Text(Constants.Text.languages)
                         StringChipView(items: languageList, backgroundColor: .yellow)
                     }
                 } else {
-                    Text("Languages: Unknown")
+                    Text("\(Constants.Text.languages)\(Constants.Text.unknown)")
                 }
                 
                 if let timezones = countryEntity.countryDetailingEntityRel?.timezones {
                     let timezoneList = timezones.split(separator: "|").map { String($0) }
                     HStack {
-                        Text("Timezones: ")
+                        Text(Constants.Text.timezones)
                         StringChipView(items: timezoneList, backgroundColor: .blue)
                     }
                 } else {
-                    Text("Timezones: Unknown")
+                    Text("\(Constants.Text.timezones)\(Constants.Text.unknown)")
                 }
                 
                 if let latitude = countryEntity.countryDetailingEntityRel?.latitude,
                    let longitude = countryEntity.countryDetailingEntityRel?.longitude {
                     Map {
                         Marker(
-                            "Capital: \(countryEntity.countryDetailingEntityRel?.capital ?? "Unknown")",
+                            "\(Constants.Text.capital) \(countryEntity.countryDetailingEntityRel?.capital ?? Constants.Text.unknown)",
                             coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                         )
                     }
@@ -94,16 +95,16 @@ struct CountryDetailView: View {
                     .frame(height: 300)
                     .cornerRadius(10)
                 } else {
-                    Text("Location: Unknown")
+                    Text("\(Constants.Text.location)\(Constants.Text.unknown)")
                 }
             }
             .padding()
         }
-        .alert("Ошибка", isPresented: Binding<Bool>(
+        .alert(Constants.Text.errorTitle, isPresented: Binding<Bool>(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )) {
-            Button("OK", role: .cancel) { }
+            Button(Constants.Text.errorMessageOK, role: .cancel) { }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
@@ -121,7 +122,7 @@ struct CountryFlagView: View {
                     RoundedRectangle(cornerRadius: 10)
                         .foregroundColor(.gray.opacity(0.2))
                         .overlay(
-                            Image(systemName: "photo")
+                            Image(systemName: Constants.Images.placeholder)
                                 .foregroundColor(.gray)
                         )
                 }

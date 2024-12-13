@@ -19,11 +19,10 @@ struct CountryListView: View {
     var body: some View {
         NavigationStack {
             if viewModel.isLoading {
-                // Загрузка: таблица-заглушка
                 PlaceholderView()
             } else {
                 countryListView
-                    .navigationTitle("Countries")
+                    .navigationTitle(Constants.Text.countriesTitle)
                     .searchable(text: $viewModel.searchText, placement: .navigationBarDrawer(displayMode: .always))
                     .onChange(of: viewModel.searchText) { _ in
                         viewModel.filterCountries()
@@ -33,7 +32,7 @@ struct CountryListView: View {
                             Button(action: {
                                 showFavorites = true
                             }) {
-                                Image(systemName: "star.fill")
+                                Image(systemName: Constants.Images.favoriteFilled)
                             }
                         }
                     }
@@ -44,11 +43,11 @@ struct CountryListView: View {
                     }
             }
         }
-        .alert("Ошибка", isPresented: Binding<Bool>(
+        .alert(Constants.Text.errorTitle, isPresented: Binding<Bool>(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )) {
-            Button("OK", role: .cancel) { }
+            Button(Constants.Text.errorMessageOK, role: .cancel) { }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
@@ -61,8 +60,8 @@ struct CountryListView: View {
                     Text(country.flag ?? "")
                         .font(.system(size: 40))
                     VStack(alignment: .leading) {
-                        Text(country.name ?? "Unknown Country")
-                        Text(country.region ?? "")
+                        Text(country.name ?? Constants.Text.unknownCountry)
+                        Text(country.region ?? Constants.Text.unknownRegion)
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
