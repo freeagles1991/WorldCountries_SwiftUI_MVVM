@@ -11,7 +11,8 @@ final class NetworkClient {
     static let shared = NetworkClient()
 
     func fetchCountries(completion: @escaping (Result<[CountryResponse], Error>) -> Void) {
-        let urlString = "https://restcountries.com/v3.1/all"
+        let urlString = Constants.apiBaseUrl
+        print(urlString)
         guard let url = URL(string: urlString) else {
             completion(.failure(NetworkError.invalidURL))
             return

@@ -5,6 +5,8 @@
 //  Created by Дима on 13.12.2024.
 //
 
+import Foundation
+
 enum Constants {
     enum Text {
         static var unknown: String { String(localized: "unknown") }
@@ -29,5 +31,9 @@ enum Constants {
         static let favoriteEmpty = "star"
         static let placeholder = "photo"
         static let removeFavorite = "xmark"
+    }
+    
+    static var apiBaseUrl: String {
+        return Bundle.main.infoDictionary?["API_BASE_URL"] as? String ?? ""
     }
 }

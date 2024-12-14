@@ -1,0 +1,8 @@
+//
+//  DebugConfig.xcconfig
+//  WorldCountries_SwiftUI_MVVM
+//
+//  Created by Дима on 14.12.2024.
+//
+
+API_BASE_URL = https:/$()/restcountries.com/v3.1/all
