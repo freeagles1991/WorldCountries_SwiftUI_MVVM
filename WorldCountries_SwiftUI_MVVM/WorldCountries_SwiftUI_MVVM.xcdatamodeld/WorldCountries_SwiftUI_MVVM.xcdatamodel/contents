@@ -21,5 +21,11 @@
         <attribute name="name" attributeType="String"/>
         <attribute name="region" optional="YES" attributeType="String"/>
         <relationship name="countryDetailingEntityRel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CountryDetailingEntity" inverseName="countryEntityRel" inverseEntity="CountryDetailingEntity"/>
+        <relationship name="countryTranslationEntityRel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CountryTranslationEntity" inverseName="contryEntityRel" inverseEntity="CountryTranslationEntity"/>
+    </entity>
+    <entity name="CountryTranslationEntity" representedClassName="CountryTranslationEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="ruCommon" optional="YES" attributeType="String"/>
+        <attribute name="ruOfficial" optional="YES" attributeType="String"/>
+        <relationship name="contryEntityRel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CountryEntity" inverseName="countryTranslationEntityRel" inverseEntity="CountryEntity"/>
     </entity>
 </model>

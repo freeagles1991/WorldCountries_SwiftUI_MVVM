@@ -47,6 +47,16 @@ final class DataSaver {
                 
                 countryEntity.countryDetailingEntityRel = countryDetailingEntity
                 countryDetailingEntity.countryEntityRel = countryEntity
+                
+                let countryTranslationEntity = CountryTranslationEntity(context: self.context)
+
+                if let russian = countryResponse.translations?["rus"] {
+                    countryTranslationEntity.ruCommon = russian.common
+                    countryTranslationEntity.ruOfficial = russian.official
+                }
+                
+                countryTranslationEntity.contryEntityRel = countryEntity
+                countryEntity.countryTranslationEntityRel = countryTranslationEntity
             }
 
             do {

@@ -12,6 +12,7 @@ import CoreData
 
 struct CountryDetailView: View {
     @StateObject private var viewModel: CountryDetailViewModel
+    @EnvironmentObject var languageManager: LanguageManager
     @ObservedObject var countryEntity: CountryEntity
     
     init(context: NSManagedObjectContext, countryEntity: CountryEntity) {
@@ -25,7 +26,7 @@ struct CountryDetailView: View {
                 CountryFlagView(imageURL: countryEntity.countryDetailingEntityRel?.flagImage)
                 
                 HStack(alignment: .top, spacing: 8) {
-                    Text(countryEntity.countryDetailingEntityRel?.officialName ?? "\(Constants.Text.unknown) \(Constants.Text.country)")
+                    Text(countryOfficialName(for: countryEntity))
                         .font(.largeTitle)
                         .bold()
                         .lineLimit(nil)
@@ -107,6 +108,15 @@ struct CountryDetailView: View {
             Button(Constants.Text.errorMessageOK, role: .cancel) { }
         } message: {
             Text(viewModel.errorMessage ?? "")
+        }
+    }
+    
+    private func countryOfficialName(for country: CountryEntity) -> String {
+        switch languageManager.currentLanguage {
+        case "ru":
+            return country.countryTranslationEntityRel?.ruOfficial ?? Constants.Text.unknownCountry
+        default:
+            return country.countryDetailingEntityRel?.officialName ?? Constants.Text.unknownCountry
         }
     }
 }

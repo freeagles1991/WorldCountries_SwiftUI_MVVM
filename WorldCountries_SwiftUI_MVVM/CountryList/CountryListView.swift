@@ -10,6 +10,7 @@ import CoreData
 
 struct CountryListView: View {
     @StateObject private var viewModel: CountryListViewModel
+    @EnvironmentObject var languageManager: LanguageManager
     @State private var showFavorites = false
     
     init(context: NSManagedObjectContext) {
@@ -60,13 +61,23 @@ struct CountryListView: View {
                     Text(country.flag ?? "")
                         .font(.system(size: 40))
                     VStack(alignment: .leading) {
-                        Text(country.name ?? Constants.Text.unknownCountry)
+                        Text(countryCommonName(for: country))
                         Text(country.region ?? Constants.Text.unknownRegion)
                             .foregroundStyle(.secondary)
                     }
                     Spacer()
                 }
             }
+        }
+    }
+    
+    // Возвращает имя страны на основе текущего языка
+    private func countryCommonName(for country: CountryEntity) -> String {
+        switch languageManager.currentLanguage {
+        case "ru":
+            return country.countryTranslationEntityRel?.ruCommon ?? Constants.Text.unknownCountry
+        default:
+            return country.name ?? Constants.Text.unknownCountry
         }
     }
 }

@@ -31,6 +31,7 @@ struct CountryResponse: Decodable {
     let region: String?
     let capital: [String]?
     let population: Int?
+    let translations: [String: Name]?
     let area: Double?
     let currencies: [String: Currency]?
     let languages: [String: String]?

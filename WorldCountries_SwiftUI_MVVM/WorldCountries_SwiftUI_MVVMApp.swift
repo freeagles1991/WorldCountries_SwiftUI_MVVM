@@ -10,11 +10,13 @@ import SwiftUI
 @main
 struct WorldCountriesApp: App {
     let persistenceController = PersistenceController.shared
+    @StateObject private var languageManager = LanguageManager()
 
     var body: some Scene {
         WindowGroup {
             CountryListView(context: persistenceController.container.viewContext)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(languageManager)
         }
     }
 }
