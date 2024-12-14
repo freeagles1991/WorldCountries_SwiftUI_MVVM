@@ -10,6 +10,7 @@ import CoreData
 
 struct FavoritesView: View {
     @StateObject private var viewModel: FavoritesViewModel
+    @EnvironmentObject var languageManager: LanguageManager
 
     init(context: NSManagedObjectContext) {
         _viewModel = StateObject(wrappedValue: FavoritesViewModel(context: context))
@@ -22,7 +23,7 @@ struct FavoritesView: View {
                     Text(country.flag ?? "")
                         .font(.system(size: 40))
                     VStack(alignment: .leading) {
-                        Text(country.name ?? Constants.Text.unknownCountry)
+                        Text(countryCommonName(for: country))
                         Text(country.region ?? Constants.Text.unknownRegion)
                             .foregroundStyle(.secondary)
                     }
@@ -36,6 +37,15 @@ struct FavoritesView: View {
             }
             .navigationTitle(Constants.Text.favoritesTitle)
             .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+    
+    private func countryCommonName(for country: CountryEntity) -> String {
+        switch languageManager.currentLanguage {
+        case "ru":
+            return country.countryTranslationEntityRel?.ruCommon ?? Constants.Text.unknownCountry
+        default:
+            return country.name ?? Constants.Text.unknownCountry
         }
     }
 }

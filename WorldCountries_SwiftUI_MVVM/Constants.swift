@@ -7,21 +7,21 @@
 
 enum Constants {
     enum Text {
-        static let unknown = "Unknown"
-        static let country = "Country"
-        static let capital = "Capital"
-        static let population = "Population: "
-        static let area = "Area: "
-        static let currency = "Currency: "
-        static let languages = "Languages: "
-        static let timezones = "Timezones: "
-        static let location = "Location: "
-        static let countriesTitle = "Countries"
-        static let unknownCountry = "Unknown Country"
-        static let unknownRegion = "Unknown Region"
-        static let errorTitle = "Ошибка"
-        static let errorMessageOK = "OK"
-        static let favoritesTitle = "Favorites"
+        static var unknown: String { String(localized: "unknown") }
+        static var country: String { String(localized: "country") }
+        static var capital: String { String(localized: "capital") }
+        static var population: String { String(localized: "population") }
+        static var area: String { String(localized: "area") }
+        static var currency: String { String(localized: "currency") }
+        static var languages: String { String(localized: "languages") }
+        static var timezones: String { String(localized: "timezones") }
+        static var location: String { String(localized: "location") }
+        static var countriesTitle: String { String(localized: "countries_title") }
+        static var unknownCountry: String { String(localized: "unknown_country") }
+        static var unknownRegion: String { String(localized: "unknown_region") }
+        static var errorTitle: String { String(localized: "error_title") }
+        static var errorMessageOK: String { String(localized: "error_message_ok") }
+        static var favoritesTitle: String { String(localized: "favorites_title") }
     }
     
     enum Images {

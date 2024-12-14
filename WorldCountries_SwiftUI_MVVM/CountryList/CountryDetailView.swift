@@ -13,48 +13,48 @@ import CoreData
 struct CountryDetailView: View {
     @StateObject private var viewModel: CountryDetailViewModel
     @EnvironmentObject var languageManager: LanguageManager
-    @ObservedObject var countryEntity: CountryEntity
+    @ObservedObject var country: CountryEntity
     
-    init(context: NSManagedObjectContext, countryEntity: CountryEntity) {
+    init(context: NSManagedObjectContext, country: CountryEntity) {
         _viewModel = StateObject(wrappedValue: CountryDetailViewModel(context: context))
-        self.countryEntity = countryEntity
+        self.country = country
     }
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                CountryFlagView(imageURL: countryEntity.countryDetailingEntityRel?.flagImage)
+                CountryFlagView(imageURL: country.countryDetailingEntityRel?.flagImage)
                 
                 HStack(alignment: .top, spacing: 8) {
-                    Text(countryOfficialName(for: countryEntity))
+                    Text(countryOfficialName(for: country))
                         .font(.largeTitle)
                         .bold()
                         .lineLimit(nil)
                     Spacer()
                     Button(action: {
-                        viewModel.toggleFavorite(for: countryEntity)
+                        viewModel.toggleFavorite(for: country)
                     }) {
-                        Image(systemName: countryEntity.isFavorite ? Constants.Images.favoriteFilled : Constants.Images.favoriteEmpty)
-                            .foregroundColor(countryEntity.isFavorite ? .yellow : .gray)
+                        Image(systemName: country.isFavorite ? Constants.Images.favoriteFilled : Constants.Images.favoriteEmpty)
+                            .foregroundColor(country.isFavorite ? .yellow : .gray)
                             .font(.largeTitle)
                     }
                 }
                 
-                Text("\(Constants.Text.capital): \(countryEntity.countryDetailingEntityRel?.capital ?? Constants.Text.unknown)")
+                Text("\(Constants.Text.capital): \(country.countryDetailingEntityRel?.capital ?? Constants.Text.unknown)")
                 
-                if let population = countryEntity.countryDetailingEntityRel?.population {
+                if let population = country.countryDetailingEntityRel?.population {
                     Text("\(Constants.Text.population)\(population)")
                 } else {
                     Text("\(Constants.Text.population)\(Constants.Text.unknown)")
                 }
                 
-                if let area = countryEntity.countryDetailingEntityRel?.area {
+                if let area = country.countryDetailingEntityRel?.area {
                     Text("\(Constants.Text.area)\(area, specifier: "%.2f") km²")
                 } else {
                     Text("\(Constants.Text.area)\(Constants.Text.unknown)")
                 }
                 
-                if let currency = countryEntity.countryDetailingEntityRel?.currency {
+                if let currency = country.countryDetailingEntityRel?.currency {
                     let currencyList = currency.split(separator: "|").map { String($0) }
                     HStack {
                         Text(Constants.Text.currency)
@@ -64,7 +64,7 @@ struct CountryDetailView: View {
                     Text("\(Constants.Text.currency)\(Constants.Text.unknown)")
                 }
                 
-                if let languages = countryEntity.countryDetailingEntityRel?.languages {
+                if let languages = country.countryDetailingEntityRel?.languages {
                     let languageList = languages.split(separator: "|").map { String($0) }
                     HStack {
                         Text(Constants.Text.languages)
@@ -74,7 +74,7 @@ struct CountryDetailView: View {
                     Text("\(Constants.Text.languages)\(Constants.Text.unknown)")
                 }
                 
-                if let timezones = countryEntity.countryDetailingEntityRel?.timezones {
+                if let timezones = country.countryDetailingEntityRel?.timezones {
                     let timezoneList = timezones.split(separator: "|").map { String($0) }
                     HStack {
                         Text(Constants.Text.timezones)
@@ -84,11 +84,11 @@ struct CountryDetailView: View {
                     Text("\(Constants.Text.timezones)\(Constants.Text.unknown)")
                 }
                 
-                if let latitude = countryEntity.countryDetailingEntityRel?.latitude,
-                   let longitude = countryEntity.countryDetailingEntityRel?.longitude {
+                if let latitude = country.countryDetailingEntityRel?.latitude,
+                   let longitude = country.countryDetailingEntityRel?.longitude {
                     Map {
                         Marker(
-                            "\(Constants.Text.capital) \(countryEntity.countryDetailingEntityRel?.capital ?? Constants.Text.unknown)",
+                            "\(Constants.Text.capital) \(country.countryDetailingEntityRel?.capital ?? Constants.Text.unknown)",
                             coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                         )
                     }

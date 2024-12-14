@@ -56,7 +56,7 @@ struct CountryListView: View {
 
     private var countryListView: some View {
         List(viewModel.filteredCountries) { country in
-            NavigationLink(destination: CountryDetailView(context: viewModel.context, countryEntity: country)) {
+            NavigationLink(destination: CountryDetailView(context: viewModel.context, country: country)) {
                 HStack {
                     Text(country.flag ?? "")
                         .font(.system(size: 40))
@@ -71,7 +71,7 @@ struct CountryListView: View {
         }
     }
     
-    // Возвращает имя страны на основе текущего языка
+
     private func countryCommonName(for country: CountryEntity) -> String {
         switch languageManager.currentLanguage {
         case "ru":
