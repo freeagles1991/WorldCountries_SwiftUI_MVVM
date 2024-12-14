@@ -31,6 +31,7 @@ enum Constants {
         static let favoriteEmpty = "star"
         static let placeholder = "photo"
         static let removeFavorite = "xmark"
+        static let share = "square.and.arrow.up"
     }
     
     static var apiBaseUrl: String {

@@ -109,6 +109,63 @@ struct CountryDetailView: View {
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if let countryName = country.name,
+                   let capital = country.countryDetailingEntityRel?.capital,
+                   let population = country.countryDetailingEntityRel?.population,
+                   let area = country.countryDetailingEntityRel?.area,
+                   let currency = country.countryDetailingEntityRel?.currency,
+                   let languages = country.countryDetailingEntityRel?.languages,
+                   let timezones = country.countryDetailingEntityRel?.timezones {
+                    ShareLink(
+                        item: shareText(
+                            for: countryName,
+                            capital: capital,
+                            population: population,
+                            area: area,
+                            currency: currency,
+                            languages: languages,
+                            timezones: timezones
+                        )
+                    ) {
+                        Image(systemName: Constants.Images.share)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func shareText(for countryName: String, capital: String, population: Int64?, area: Double?, currency: String?, languages: String?, timezones: String?) -> String {
+        var shareMessage = """
+        \(Constants.Text.country): \(countryName)
+        \(Constants.Text.capital): \(capital)
+        """
+        
+        if let population = population {
+            shareMessage += "\n\(Constants.Text.population)\(population)"
+        }
+        
+        if let area = area {
+            shareMessage += "\n\(Constants.Text.area)\(String(format: "%.2f", area)) km²"
+        }
+        
+        if let currency = currency {
+            let currencyList = currency.split(separator: "|").joined(separator: ", ")
+            shareMessage += "\n\(Constants.Text.currency)\(currencyList)"
+        }
+        
+        if let languages = languages {
+            let languageList = languages.split(separator: "|").joined(separator: ", ")
+            shareMessage += "\n\(Constants.Text.languages)\(languageList)"
+        }
+        
+        if let timezones = timezones {
+            let timezoneList = timezones.split(separator: "|").joined(separator: ", ")
+            shareMessage += "\n\(Constants.Text.timezones)\(timezoneList)"
+        }
+        
+        return shareMessage
     }
 }
 
