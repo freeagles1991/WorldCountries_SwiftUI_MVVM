@@ -61,7 +61,7 @@ struct CountryListView: View {
                     Text(country.flag ?? "")
                         .font(.system(size: 40))
                     VStack(alignment: .leading) {
-                        Text(countryCommonName(for: country))
+                        Text(languageManager.countryCommonName(for: country))
                         Text(country.region ?? Constants.Text.unknownRegion)
                             .foregroundStyle(.secondary)
                     }
@@ -70,19 +70,8 @@ struct CountryListView: View {
             }
         }
     }
-    
-
-    private func countryCommonName(for country: CountryEntity) -> String {
-        switch languageManager.currentLanguage {
-        case "ru":
-            return country.countryTranslationEntityRel?.ruCommon ?? Constants.Text.unknownCountry
-        default:
-            return country.name ?? Constants.Text.unknownCountry
-        }
-    }
 }
 
-/// Представление-заглушка с анимацией
 struct PlaceholderView: View {
     @State private var isAnimating = false
     

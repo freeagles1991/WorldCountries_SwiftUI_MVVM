@@ -26,7 +26,7 @@ struct CountryDetailView: View {
                 CountryFlagView(imageURL: country.countryDetailingEntityRel?.flagImage)
                 
                 HStack(alignment: .top, spacing: 8) {
-                    Text(countryOfficialName(for: country))
+                    Text(languageManager.countryOfficialName(for: country))
                         .font(.largeTitle)
                         .bold()
                         .lineLimit(nil)
@@ -110,15 +110,6 @@ struct CountryDetailView: View {
             Text(viewModel.errorMessage ?? "")
         }
     }
-    
-    private func countryOfficialName(for country: CountryEntity) -> String {
-        switch languageManager.currentLanguage {
-        case "ru":
-            return country.countryTranslationEntityRel?.ruOfficial ?? Constants.Text.unknownCountry
-        default:
-            return country.countryDetailingEntityRel?.officialName ?? Constants.Text.unknownCountry
-        }
-    }
 }
 
 struct CountryFlagView: View {
@@ -128,7 +119,6 @@ struct CountryFlagView: View {
         GeometryReader { geometry in
             KFImage(URL(string: imageURL ?? ""))
                 .placeholder {
-                    // Заглушка
                     RoundedRectangle(cornerRadius: 10)
                         .foregroundColor(.gray.opacity(0.2))
                         .overlay(
@@ -139,15 +129,15 @@ struct CountryFlagView: View {
                 .cancelOnDisappear(true)
                 .resizable()
                 .scaledToFill()
-                .frame(width: geometry.size.width, height: geometry.size.width * 0.6) // Пропорции 16:9
+                .frame(width: geometry.size.width, height: geometry.size.width * 0.6)
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray, lineWidth: 2) // Обводка
+                        .stroke(Color.gray, lineWidth: 2)
                 )
                 .clipped()
         }
-        .frame(height: UIScreen.main.bounds.width * 0.6) // Ограничение высоты
+        .frame(height: UIScreen.main.bounds.width * 0.6)
     }
 }
 

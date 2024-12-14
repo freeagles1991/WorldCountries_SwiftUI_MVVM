@@ -17,13 +17,11 @@ final class DataSaver {
     func saveCountries(_ countries: [CountryResponse]) {
         context.perform {
             for countryResponse in countries {
-                // Проверка на существование сущности с таким же именем
                 if self.doesCountryExist(name: countryResponse.name.common) {
                     print("Country \(countryResponse.name.common) already exists. Skipping.")
                     continue
                 }
                 
-                // Создание новой сущности
                 let countryEntity = CountryEntity(context: self.context)
                 countryEntity.id = UUID()
                 countryEntity.name = countryResponse.name.common

@@ -9,12 +9,12 @@ import SwiftUI
 import CoreData
 
 final class CountryListViewModel: ObservableObject {
-    @Published var isLoading: Bool = true // Состояние загрузки
-    @Published var countries: [CountryEntity] = [] // Загруженные данные
-    @Published var countryDetails: CountryDetailingEntity? // Детализация страны
-    @Published var searchText: String = "" // Текст поиска
-    @Published var filteredCountries: [CountryEntity] = [] // Отфильтрованные данные
-    @Published var errorMessage: String? // Сообщение об ошибке для отображения алерта
+    @Published var isLoading: Bool = true
+    @Published var countries: [CountryEntity] = []
+    @Published var countryDetails: CountryDetailingEntity?
+    @Published var searchText: String = ""
+    @Published var filteredCountries: [CountryEntity] = []
+    @Published var errorMessage: String?
 
     let context: NSManagedObjectContext
 
@@ -23,7 +23,6 @@ final class CountryListViewModel: ObservableObject {
         fetchCountries()
     }
 
-    /// Проверяем Core Data и загружаем данные
     func fetchCountries() {
         let fetchRequest: NSFetchRequest<CountryEntity> = CountryEntity.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
@@ -48,7 +47,6 @@ final class CountryListViewModel: ObservableObject {
         }
     }
 
-    /// Загрузка данных из API
     private func loadFromNetwork() {
         NetworkClient.shared.fetchCountries { result in
             switch result {
@@ -57,7 +55,7 @@ final class CountryListViewModel: ObservableObject {
                 let dataSaver = DataSaver(context: self.context)
                 dataSaver.saveCountries(countries)
                 DispatchQueue.main.async {
-                    self.fetchCountries() // Повторный вызов для проверки сохранённых данных
+                    self.fetchCountries()
                 }
             case .failure(let error):
                 print("Ошибка загрузки данных из сети: \(error.localizedDescription)")
@@ -69,7 +67,6 @@ final class CountryListViewModel: ObservableObject {
         }
     }
     
-    //Фильтруем в строке поиска
     func filterCountries() {
         if searchText.isEmpty {
             print("[Filter] Search text is empty. Showing all countries.")
@@ -88,7 +85,6 @@ final class CountryListViewModel: ObservableObject {
         }
     }
     
-    //Обработка ошибок сети
     private func handleNetworkError(_ error: Error) {
         let message: String
         if let networkError = error as? NetworkError {
@@ -105,7 +101,6 @@ final class CountryListViewModel: ObservableObject {
         showError(message)
     }
     
-    //Показываем алерт
     private func showError(_ message: String) {
         DispatchQueue.main.async {
             self.errorMessage = message

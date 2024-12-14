@@ -9,7 +9,7 @@ import SwiftUI
 import CoreData
 
 final class CountryDetailViewModel: ObservableObject {
-    @Published var errorMessage: String? // Сообщение об ошибке для отображения алерта
+    @Published var errorMessage: String?
     
     let context: NSManagedObjectContext
 
@@ -17,7 +17,6 @@ final class CountryDetailViewModel: ObservableObject {
         self.context = context
     }
     
-    //Переключаем параметр Избранное в контексте
     func toggleFavorite(for country: CountryEntity) {
         context.perform {
             country.isFavorite.toggle()
@@ -32,7 +31,6 @@ final class CountryDetailViewModel: ObservableObject {
         }
     }
     
-    //Показываем алерт
     private func showError(_ message: String) {
         DispatchQueue.main.async {
             self.errorMessage = message
